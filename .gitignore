@@ -69,8 +69,7 @@ oprofile_data/
 /bin/**/*.ilk
 /bin/**/*.lib
 /bin/**/*.pdb
-/bin/Langs
-/bin/scripts
+/bin/scripts/
 /bin/PCSX2
 /bin/*ReplayLoader
 /bin/bios
