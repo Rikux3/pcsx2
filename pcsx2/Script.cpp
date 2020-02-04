@@ -4,10 +4,10 @@
 
 #include "sol/sol.hpp"
 
-sol::state state;
+sol::state lua;
 
 sol::function ExecuteOnceOnLoad;
-sol::function ExecuteContinously;
+sol::function ExecuteContinuously;
 
 namespace
 {
@@ -47,25 +47,25 @@ namespace
 
 bool InitScript(wxString path)
 {
-    state.open_libraries(sol::lib::base, sol::lib::package);
+    lua.open_libraries(sol::lib::base, sol::lib::package);
 
     // Export memory functions to lua script
-    state.set_function("ReadByte", ReadByte);
-    state.set_function("Read2Byte", Read2Byte);
-    state.set_function("Read4Byte", Read4Byte);
+    lua.set_function("ReadByte", ReadByte);
+    lua.set_function("Read2Byte", Read2Byte);
+    lua.set_function("Read4Byte", Read4Byte);
 
-    state.set_function("WriteByte", WriteByte);
-    state.set_function("Write2Byte", Write2Byte);
-    state.set_function("Write4Byte", Write4Byte);
+    lua.set_function("WriteByte", WriteByte);
+    lua.set_function("Write2Byte", Write2Byte);
+    lua.set_function("Write4Byte", Write4Byte);
 
     // Parse the main script
-    state.do_file(path.ToStdString());
+    lua.do_file(path.ToStdString());
 
     // Assign function calls to lua functions
-    ExecuteOnceOnLoad = state["ExecuteOnceOnLoad"];
-    ExecuteContinously = state["ExecuteContinously"];
+    ExecuteOnceOnLoad = lua["ExecuteOnceOnLoad"];
+    ExecuteContinuously = lua["ExecuteContinuously"];
 
-    if (!ExecuteOnceOnLoad || !ExecuteContinously)
+    if (!ExecuteOnceOnLoad || !ExecuteContinuously)
         return false;
 
     return true;
@@ -84,7 +84,7 @@ bool LoadScriptFromDir(wxString name, const wxDirName &folderName, const wxStrin
 
 void ExecuteScript(script_place_type place)
 {
-    if (!ExecuteOnceOnLoad || !ExecuteContinously)
+    if (!ExecuteOnceOnLoad || !ExecuteContinuously)
         return;
 
     switch (place) {
@@ -92,7 +92,7 @@ void ExecuteScript(script_place_type place)
             ExecuteOnceOnLoad();
             break;
         case SPT_CONTINOUSLY:
-            ExecuteContinously();
+            ExecuteContinuously();
             break;
     }
 }
