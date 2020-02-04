@@ -67,6 +67,7 @@ extern wxString  GetUiKeysFilename();
 extern wxDirName GetLogFolder();
 extern wxDirName GetCheatsFolder();
 extern wxDirName GetCheatsWsFolder();
+extern wxDirName GetScriptsFolder();
 
 enum InstallationModeType
 {
@@ -151,7 +152,8 @@ public:
 				UseDefaultLogs:1,
 				UseDefaultLangs:1,
 				UseDefaultCheats:1,
-				UseDefaultCheatsWS:1;
+				UseDefaultCheatsWS:1,
+				UseDefaultScripts:1;
 		BITFIELD_END
 
 		wxDirName
@@ -162,7 +164,8 @@ public:
 			Langs,
 			Logs,
 			Cheats,
-			CheatsWS;
+			CheatsWS,
+			Scripts;
 
 		wxDirName RunIso;		// last used location for Iso loading.
 		wxDirName RunELF;		// last used location for ELF loading.

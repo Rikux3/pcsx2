@@ -202,6 +202,7 @@ void MainEmuFrame::ConnectMenus()
 	Bind(wxEVT_MENU, &MainEmuFrame::Menu_EnablePatches_Click, this, MenuId_EnablePatches);
 	Bind(wxEVT_MENU, &MainEmuFrame::Menu_EnableCheats_Click, this, MenuId_EnableCheats);
 	Bind(wxEVT_MENU, &MainEmuFrame::Menu_EnableWideScreenPatches_Click, this, MenuId_EnableWideScreenPatches);
+    Bind(wxEVT_MENU, &MainEmuFrame::Menu_EnableScripts_Click, this, MenuId_EnableScripts);
 #ifndef DISABLE_RECORDING
 	Bind(wxEVT_MENU, &MainEmuFrame::Menu_EnableRecordingTools_Click, this, MenuId_EnableRecordingTools);
 #endif
@@ -468,6 +469,9 @@ MainEmuFrame::MainEmuFrame(wxWindow* parent, const wxString& title)
 
 	m_menuSys.Append(MenuId_EnableWideScreenPatches,	_("Enable &Widescreen Patches"),
 		_("Enabling Widescreen Patches may occasionally cause issues."), wxITEM_CHECK);
+
+	m_menuSys.Append(MenuId_EnableScripts, _("Enable Scripts"),
+		wxEmptyString, wxITEM_CHECK);
 
 #ifndef DISABLE_RECORDING
 	m_menuSys.Append(MenuId_EnableRecordingTools, _("Enable &Recording Tools"),
@@ -746,7 +750,9 @@ void MainEmuFrame::ApplyConfigToGui(AppConfig& configToApply, int flags)
 	{//these should not be affected by presets
 		menubar.Check( MenuId_EnableBackupStates, configToApply.EmuOptions.BackupSavestate );
 		menubar.Check( MenuId_EnableCheats,  configToApply.EmuOptions.EnableCheats );
+
 		menubar.Check( MenuId_EnableWideScreenPatches,  configToApply.EmuOptions.EnableWideScreenPatches );
+        menubar.Check( MenuId_EnableScripts, configToApply.EmuOptions.EnableScripts);
 #ifndef DISABLE_RECORDING
 		menubar.Check(MenuId_EnableRecordingTools, configToApply.EmuOptions.EnableRecordingTools);
 #endif

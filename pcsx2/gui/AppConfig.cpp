@@ -91,6 +91,12 @@ namespace PathDefs
 			return retval;
 		}
 
+		const wxDirName &Scripts()
+        {
+            static const wxDirName retval(L"scripts");
+            return retval;
+        }
+
 		const wxDirName& Langs()
 		{
 			static const wxDirName retval( L"Langs" );
@@ -203,6 +209,11 @@ namespace PathDefs
 	{
 		return GetDocuments() + Base::CheatsWS();
 	}
+
+	wxDirName GetScripts()
+	{
+        return GetDocuments() + Base::Scripts();
+	}
 	
 	wxDirName GetDocs()
 	{
@@ -261,6 +272,7 @@ namespace PathDefs
 			case FolderId_Langs:		return GetLangs();
 			case FolderId_Cheats:		return GetCheats();
 			case FolderId_CheatsWS:		return GetCheatsWS();
+			case FolderId_Scripts:		return GetScripts();
 
 			case FolderId_Documents:	return CustomDocumentsFolder;
 
@@ -284,6 +296,7 @@ wxDirName& AppConfig::FolderOptions::operator[]( FoldersEnum_t folderidx )
 		case FolderId_Langs:		return Langs;
 		case FolderId_Cheats:		return Cheats;
 		case FolderId_CheatsWS:		return CheatsWS;
+        case FolderId_Scripts:		return Scripts;
 
 		case FolderId_Documents:	return CustomDocumentsFolder;
 
@@ -311,6 +324,7 @@ bool AppConfig::FolderOptions::IsDefault( FoldersEnum_t folderidx ) const
 		case FolderId_Langs:		return UseDefaultLangs;
 		case FolderId_Cheats:		return UseDefaultCheats;
 		case FolderId_CheatsWS:		return UseDefaultCheatsWS;
+        case FolderId_Scripts:		return UseDefaultScripts;
 
 		case FolderId_Documents:	return false;
 
@@ -375,6 +389,11 @@ void AppConfig::FolderOptions::Set( FoldersEnum_t folderidx, const wxString& src
 		case FolderId_CheatsWS:
 			CheatsWS = src;
 			UseDefaultCheatsWS = useDefault;
+		break;
+
+		case FolderId_Scripts:
+			Scripts = src;
+            UseDefaultScripts = useDefault;
 		break;
 
 		jNO_DEFAULT
@@ -465,6 +484,11 @@ wxDirName GetCheatsFolder()
 wxDirName GetCheatsWsFolder()
 {
 	return GetResolvedFolder(FolderId_CheatsWS);
+}
+
+wxDirName GetScriptsFolder()
+{
+    return GetResolvedFolder(FolderId_Scripts);
 }
 
 wxDirName GetSettingsFolder()
@@ -710,6 +734,7 @@ void AppConfig::FolderOptions::ApplyDefaults()
 	if( UseDefaultPluginsFolder)PluginsFolder = PathDefs::GetPlugins();
 	if( UseDefaultCheats )      Cheats		  = PathDefs::GetCheats();
 	if( UseDefaultCheatsWS )    CheatsWS	  = PathDefs::GetCheatsWS();
+    if( UseDefaultScripts )		Scripts		  = PathDefs::GetScripts();
 }
 
 // ------------------------------------------------------------------------
@@ -722,6 +747,7 @@ AppConfig::FolderOptions::FolderOptions()
 	, Logs			( PathDefs::GetLogs() )
 	, Cheats		( PathDefs::GetCheats() )
 	, CheatsWS      ( PathDefs::GetCheatsWS() )
+    , Scripts		( PathDefs::GetScripts() )
 
 	, RunIso( PathDefs::GetDocuments() )			// raw default is always the Documents folder.
 	, RunELF( PathDefs::GetDocuments() )			// raw default is always the Documents folder.
@@ -747,6 +773,7 @@ void AppConfig::FolderOptions::LoadSave( IniInterface& ini )
 	IniBitBool( UseDefaultPluginsFolder );
 	IniBitBool( UseDefaultCheats );
 	IniBitBool( UseDefaultCheatsWS );
+    IniBitBool(	UseDefaultScripts );
 
 	//when saving in portable mode, we save relative paths if possible
 	 //  --> on load, these relative paths will be expanded relative to the exe folder.
@@ -760,6 +787,7 @@ void AppConfig::FolderOptions::LoadSave( IniInterface& ini )
 	IniEntryDirFile( Langs,  rel );
 	IniEntryDirFile( Cheats, rel );
 	IniEntryDirFile( CheatsWS, rel );
+    IniEntryDirFile( Scripts, rel);
 	ini.Entry( L"PluginsFolder", PluginsFolder, InstallFolder + PathDefs::Base::Plugins(), rel );
 
 	IniEntryDirFile( RunIso, rel );

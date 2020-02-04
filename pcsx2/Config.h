@@ -456,6 +456,7 @@ struct Pcsx2Config
 			EnablePatches		:1,		// enables patch detection and application
 			EnableCheats		:1,		// enables cheat detection and application
 			EnableWideScreenPatches		:1,
+			EnableScripts		:1,		// enables lua scripts
 #ifndef DISABLE_RECORDING
 			EnableRecordingTools :1,
 #endif

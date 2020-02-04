@@ -494,6 +494,13 @@ void MainEmuFrame::Menu_EnableWideScreenPatches_Click( wxCommandEvent& )
 	AppSaveSettings();
 }
 
+void MainEmuFrame::Menu_EnableScripts_Click(wxCommandEvent &)
+{
+    g_Conf->EmuOptions.EnableScripts = GetMenuBar()->IsChecked(MenuId_EnableScripts);
+    AppApplySettings();
+    AppSaveSettings();
+}
+
 #ifndef DISABLE_RECORDING
 void MainEmuFrame::Menu_EnableRecordingTools_Click(wxCommandEvent&)
 {
