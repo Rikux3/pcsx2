@@ -30,6 +30,7 @@
 #include "CDVD/CDVD.h"
 #include "Elfheader.h"
 #include "Patch.h"
+#include "Script.h"
 #include "R5900Exceptions.h"
 #include "Sio.h"
 
@@ -461,6 +462,11 @@ static void _ApplySettings( const Pcsx2Config& src, Pcsx2Config& fixup )
 			gameWsHacks.Printf(L" [%d widescreen hacks]", numberDbfCheatsLoaded);
 		}
 	}
+
+	if (fixup.EnableScripts) 
+	{
+        LoadScriptFromDir(gameCRC, GetScriptsFolder(), L"Scripts");
+    }
 
 	// When we're booting, the bios loader will set a a title which would be more interesting than this
 	// to most users - with region, version, etc, so don't overwrite it with patch info. That's OK. Those
