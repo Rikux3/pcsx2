@@ -1,0 +1,98 @@
+#include "PrecompiledHeader.h"
+#include "Script.h"
+#include "Memory.h"
+
+#include "sol/sol.hpp"
+
+sol::state state;
+
+sol::function ExecuteOnceOnLoad;
+sol::function ExecuteContinously;
+
+namespace
+{
+	u8 ReadByte(u32 addr)
+	{
+		return memRead8(addr);
+	}
+
+	u16 Read2Byte(u32 addr)
+    {
+        return memRead16(addr);
+    }
+
+	u32 Read4Byte(u32 addr)
+    {
+        return memRead32(addr);
+    }
+
+	void WriteByte(u32 addr, u8 val)
+	{
+        if (memRead8(addr) != (u8)val)
+			memWrite8(addr, (u8)val);
+	}
+
+	void Write2Byte(u32 addr, u16 val)
+    {
+        if (memRead16(addr) != (u16)val)
+			memWrite16(addr, (u16)val);
+    }
+
+	void Write4Byte(u32 addr, u32 val)
+    {
+        if (memRead32(addr) != (u32)val)
+			memWrite32(addr, (u32)val);
+    }
+}
+
+bool InitScript(wxString path)
+{
+    state.open_libraries(sol::lib::base, sol::lib::package);
+
+    // Export memory functions to lua script
+    state.set_function("ReadByte", ReadByte);
+    state.set_function("Read2Byte", Read2Byte);
+    state.set_function("Read4Byte", Read4Byte);
+
+    state.set_function("WriteByte", WriteByte);
+    state.set_function("Write2Byte", Write2Byte);
+    state.set_function("Write4Byte", Write4Byte);
+
+    // Parse the main script
+    state.do_file(path.ToStdString());
+
+    // Assign function calls to lua functions
+    ExecuteOnceOnLoad = state["ExecuteOnceOnLoad"];
+    ExecuteContinously = state["ExecuteContinously"];
+
+    if (!ExecuteOnceOnLoad || !ExecuteContinously)
+        return false;
+
+    return true;
+}
+
+bool LoadScriptFromDir(wxString name, const wxDirName &folderName, const wxString &friendlyName)
+{
+    if (!folderName.Exists()) {
+        Console.WriteLn(Color_Red, L"The %s folder ('%s') is inaccessible. Skipping...", WX_STR(friendlyName), WX_STR(folderName.ToString()));
+        return 0;
+    }
+
+    wxString pathName = Path::Combine(folderName, name.MakeUpper() + L".lua");
+    return InitScript(pathName);
+}
+
+void ExecuteScript(script_place_type place)
+{
+    if (!ExecuteOnceOnLoad || !ExecuteContinously)
+        return;
+
+    switch (place) {
+        case SPT_ONCE_ON_LOAD:
+            ExecuteOnceOnLoad();
+            break;
+        case SPT_CONTINOUSLY:
+            ExecuteContinously();
+            break;
+    }
+}
