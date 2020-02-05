@@ -43,12 +43,21 @@ namespace
         if (memRead32(addr) != (u32)val)
 			memWrite32(addr, (u32)val);
     }
+
+	std::vector<u8> ReadBuffer(u32 addr, u32 size)
+	{
+        std::vector<u8> buffer(size);
+        for (size_t i = 0; i < size; i++) {
+            buffer.at(i) = memRead8(addr);
+            addr++;
+		}
+
+		return buffer;
+	}
 }
 
-bool InitScript(wxString path)
+void ExportFunctionCalls()
 {
-    lua.open_libraries(sol::lib::base, sol::lib::package);
-
     // Export memory functions to lua script
     lua.set_function("ReadByte", ReadByte);
     lua.set_function("Read2Byte", Read2Byte);
@@ -57,6 +66,15 @@ bool InitScript(wxString path)
     lua.set_function("WriteByte", WriteByte);
     lua.set_function("Write2Byte", Write2Byte);
     lua.set_function("Write4Byte", Write4Byte);
+
+    lua.set_function("ReadBuffer", ReadBuffer);
+}
+
+bool InitScript(wxString path)
+{
+    lua.open_libraries(sol::lib::base, sol::lib::package);
+	
+	ExportFunctionCalls();
 
     // Parse the main script
     lua.do_file(path.ToStdString());
